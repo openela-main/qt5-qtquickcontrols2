@@ -4,7 +4,7 @@
 
 Name:    qt5-%{qt_module}
 Summary: Qt5 - module with set of QtQuick controls for embedded
-Version: 5.15.3
+Version: 5.15.9
 Release: 1%{?dist}
 
 License: GPLv2+ or LGPLv3 and GFDL
@@ -12,17 +12,18 @@ Url:     http://www.qt.io
 %global majmin %(echo %{version} | cut -d. -f1-2)
 Source0: https://download.qt.io/official_releases/qt/%{majmin}/%{version}/submodules/%{qt_module}-everywhere-opensource-src-%{version}.tar.xz
 
+Patch1:  0001-Unset-mouseGrabberPopup-if-it-s-removed-from-childre.patch
+Patch2:  0002-Ensure-we-don-t-crash-when-changing-sizes-after-clea.patch
+Patch3:  0003-Fix-scroll-bars-not-showing-up-when-binding-to-stand.patch
+Patch4:  0004-implement-a11y-pressing-of-qquickabstractbutton.patch
+Patch5:  0005-Fix-the-popup-position-of-a-Menu.patch
+
 # filter qml provides
 %global __provides_exclude_from ^%{_qt5_archdatadir}/qml/.*\\.so$
 
 BuildRequires: make
 BuildRequires: qt5-qtbase-devel >= %{version}
 BuildRequires: qt5-qtbase-private-devel
-#libQt53DRender.so.5(Qt_5_PRIVATE_API)(64bit)
-#libQt5Core.so.5(Qt_5_PRIVATE_API)(64bit)
-#libQt5Gui.so.5(Qt_5_PRIVATE_API)(64bit)
-#libQt5Qml.so.5(Qt_5_PRIVATE_API)(64bit)
-#libQt5Quick.so.5(Qt_5_PRIVATE_API)(64bit)
 %{?_qt5:Requires: %{_qt5}%{?_isa} = %{_qt5_version}}
 BuildRequires: qt5-qtdeclarative-devel
 
@@ -60,7 +61,7 @@ Requires: %{name}%{?_isa} = %{version}-%{release}
 %endif
 
 %prep
-%setup -q -n %{qt_module}-everywhere-src-%{version}
+%autosetup -p1 -n %{qt_module}-everywhere-src-%{version}
 
 
 %build
@@ -126,6 +127,10 @@ rm -f %{buildroot}%{_qt5_libdir}/libQt5*.la
 %endif
 
 %changelog
+* Tue Apr 18 2023 Jan Grulich <jgrulich@redhat.com> - 5.15.9-1
+- 5.15.9
+  Resolves: bz#2175738
+
 * Mon Mar 28 2022 Jan Grulich <jgrulich@redhat.com> - 5.15.3-1
 - 5.15.3
   Resolves: bz#2061364
